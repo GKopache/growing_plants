@@ -1,0 +1,58 @@
+// Basic Relay Functions called RelaySwitch sets a relay on or off for a certain period of time.
+// Note that to turn relay on the pin must be set LOW and vis versa
+
+//declaring pins
+const int relay[] = {7, 6, 5, 4};               //relays set to pins in order
+int button = 10;                                //button pin set
+
+//time objects
+unsigned long relayTimeOn[] = {0, 0, 0, 0};     //will store the last time millis was updated
+unsigned long duration = 2000;                  //sets relay time ON. Will be set by other info/variables in future
+
+//Conditions
+int condition = 0;                              //button status. Will be for various conditions in future
+int relayStatus[] = {0, 0, 0, 0};               //Will be used by 
+
+//Other usefull variables
+
+
+void setup() {
+
+//sets pin modes and initializes   
+  for(int n = 0; n <= 3; n++) 
+    pinMode(relay[n], OUTPUT);
+  
+
+  pinMode(button, INPUT);
+
+  for(int n = 0; n <= 3; n++)
+    digitalWrite(relay[n], HIGH);
+
+}
+
+
+void loop() {
+
+  condition = digitalRead(button);                                          //outputs button status to buttonRead
+
+  for(int n = 0; n <= 3; n++) 
+  relayStatus[n] = relayUpdate(n, condition, duration);                     //Relay status is a simple array of all current relay 
+   
+}
+
+
+int relayUpdate(int n, int condition, unsigned long duration) {
+  
+  if(condition == HIGH && relayStatus[n] == 0){
+    digitalWrite(relay[n], LOW);                 //changes relay state to ON
+    relayTimeOn[n] = millis();
+    return 1;
+  }
+  
+  else{
+    if(millis() - relayTimeOn[n] > duration) {
+      digitalWrite(relay[n], HIGH);              //changes relay state to OFF
+      return 0;
+      }
+  }
+}
